@@ -9,17 +9,18 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-    "build": "tsc",
-    "test": "jest"
-  },
-  "keywords": ["reading", "time", "plugin", "estimation"],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
-  }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": ["reading", "time", "plugin", "estimation"],
+  "author": "daasrattale",
+  "license": "MIT"
+  
 }
