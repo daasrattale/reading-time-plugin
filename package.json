@@ -13,7 +13,7 @@
     "build": "tsc",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": ["reading", "time", "plugin", "estimation"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
