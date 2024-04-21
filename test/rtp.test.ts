@@ -1,70 +1,82 @@
-import readingTimePlugin, { ReadingTimePluginConfig, ReadingTimePluginResults } from "../src/index";
+import readingTimePlugin, { EstimationResults, ReadingTimePluginConfig, isWord } from "../src/index";
 
 test("time with default values", () => {
-     const config: ReadingTimePluginConfig = {
-          text: "Hello World"
-     }
+     const initialConfig: ReadingTimePluginConfig = {}
 
-     const expectedResults: ReadingTimePluginResults = {
+     const expectedResults: EstimationResults = {
           minutes: 1,
-          wordsPerMinute: 225,
-          words: 2
+          wordsCount: 2
      }
 
-     const result: ReadingTimePluginResults = readingTimePlugin(config);
+     const { estimate, config } = readingTimePlugin(initialConfig);
 
-
-     expect(result).toStrictEqual(expectedResults);
+     expect(estimate("Hello World")).toStrictEqual(expectedResults);
+     expect(config).toStrictEqual(initialConfig);
 });
 
 
-test("time with custom works per minute", () => {
-     const config: ReadingTimePluginConfig = {
-          text: "Hello World",
+test("time with custom words per minute", () => {
+     const initialConfig: ReadingTimePluginConfig = {
           wordsPerMinute: 123
      }
 
-     const expectedResults: ReadingTimePluginResults = {
+     const expectedResults: EstimationResults = {
           minutes: 1,
-          wordsPerMinute: 123,
-          words: 2
+          wordsCount: 2
      }
 
-     const result = readingTimePlugin(config);
+     const { estimate, config } = readingTimePlugin(initialConfig);
 
-     expect(result).toStrictEqual(expectedResults);
+     expect(estimate("Hello World")).toStrictEqual(expectedResults);
+     expect(config).toStrictEqual(initialConfig);
 });
 
 
 test("time with empty string", () => {
-     const config: ReadingTimePluginConfig = {
-          text: ""
-     }
+     const initialConfig: ReadingTimePluginConfig = {}
 
-     const expectedResults: ReadingTimePluginResults = {
+     const expectedResults: EstimationResults = {
           minutes: 0,
-          wordsPerMinute: 225,
-          words: 0
+          wordsCount: 0
      }
 
-     const result = readingTimePlugin(config);
+     const { estimate, config } = readingTimePlugin(initialConfig);
 
-     expect(result).toStrictEqual(expectedResults);
+     expect(estimate("")).toStrictEqual(expectedResults);
+     expect(config).toStrictEqual(initialConfig);
 });
 
 
-test("time with non-words", () => {
-     const config: ReadingTimePluginConfig = {
-          text: "Hello World !, The world 1s Amazing !"
-     }
 
-     const expectedResults: ReadingTimePluginResults = {
+test("time with special characters", () => {
+     const initialConfig: ReadingTimePluginConfig = {}
+
+     const expectedResults: EstimationResults = {
           minutes: 1,
-          wordsPerMinute: 225,
-          words: 6
+          wordsCount: 6
      }
 
-     const result = readingTimePlugin(config);
+     const { estimate, config } = readingTimePlugin(initialConfig);
 
-     expect(result).toStrictEqual(expectedResults);
+     expect(estimate("Hello World !, The world 1s Amazing !")).toStrictEqual(expectedResults);
+     expect(config).toStrictEqual(initialConfig);
+});
+
+
+test("time with custom filter function", () => {
+     const initialConfig: ReadingTimePluginConfig = {
+          filterWord: (word: string) => {
+               return isWord(word) && word != "1s"
+          }
+     }
+
+     const expectedResults: EstimationResults = {
+          minutes: 1,
+          wordsCount: 5
+     }
+
+     const { estimate, config } = readingTimePlugin(initialConfig);
+
+     expect(estimate("Hello World !, The world 1s Amazing !")).toStrictEqual(expectedResults);
+     expect(config).toStrictEqual(initialConfig);
 });

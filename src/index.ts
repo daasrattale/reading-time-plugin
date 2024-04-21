@@ -3,20 +3,35 @@
  */
 interface ReadingTimePluginConfig {
     /**
-     * The text to be estimated.
-     */
-    text: string;
-    /**
      * The word per minutes rate.
      */
-    wordsPerMinute?: number
+    wordsPerMinute?: number;
+
+    /**
+     * Filters words.
+     * @param word string 
+     * @returns boolean
+     */
+    filterWord?: (word: string) => boolean
 }
 
 
-interface ReadingTimePluginResults {
+interface EstimationResults {
     minutes: number;
-    wordsPerMinute: number,
-    words: number
+    wordsCount: number
+}
+
+interface ReadingTimePluginResults {
+    /**
+     * Estimates reading time of text.
+     * @param text string - The text to be estimated.
+     * @returns number
+     */
+    estimate: (text: string) => EstimationResults;
+    /**
+     * Configuration object - ReadingTimePluginConfig.
+     */
+    config: ReadingTimePluginConfig,
 }
 
 /**
@@ -24,7 +39,7 @@ interface ReadingTimePluginResults {
  * @param str string - A str to be checked, how many words it has.
  * @returns number - Words count.
  */
-function wordCounter(str: string): number {
+function wordCounter(str: string, isWord: (word: string) => boolean): number {
     const text = str.split(/\s+/)
     let wordCount = 0
     for (let i = 0; i < text.length; i++) {
@@ -40,7 +55,8 @@ function wordCounter(str: string): number {
  * @param str string - A str to be checked if it's a word.
  * @returns boolean
  */
-function isWord(str: string) {
+function isWord(str: string): boolean {
+    if (!str) return false;
     let alphaNumericFound = false
     for (let i = 0; i < str.length; i++) {
         const code = str.charCodeAt(i)
@@ -57,27 +73,33 @@ function isWord(str: string) {
 /**
  * Returns the estimated time to read a provided text.
  * @param config ReadingTimePluginConfig - A configuration object for the plugin.
- * @param config.text string - The text to be estimated.
  * @param config.wordsPerMinute number? - The words per minute rate (optional, default: 225).
+ * @param config.filterWord (word: string) => boolean - Filters words (optional).
  * 
  * @returns ReadingTimePluginResults - Results Object.
  */
-function readingTimePlugin({ text, wordsPerMinute = 225 }: ReadingTimePluginConfig): ReadingTimePluginResults {
-    let readingTime = 0;
-    let words = 0;
+function readingTimePlugin(config: ReadingTimePluginConfig): ReadingTimePluginResults {
 
-    if (!!text) {
-        words = wordCounter(text);
-        readingTime = Math.ceil(words / wordsPerMinute);
+    const { wordsPerMinute = 225, filterWord = isWord } = config;
+
+    const estimate = (text: string) => {
+        let readingTime: number = 0;
+        let wordsCount: number = 0;
+
+        if (!!text) {
+            wordsCount = wordCounter(text, filterWord);
+            readingTime = Math.ceil(wordsCount / wordsPerMinute);
+        }
+
+        return {
+            minutes: readingTime,
+            wordsCount
+        }
     }
 
-    return {
-        minutes: readingTime,
-        wordsPerMinute,
-        words
-    }
+    return { estimate, config }
 }
 
-export { ReadingTimePluginConfig, ReadingTimePluginResults };
+export { EstimationResults, ReadingTimePluginConfig, ReadingTimePluginResults, isWord };
 export default readingTimePlugin;
 
