@@ -16,8 +16,15 @@ You can install the Reading Time Plugin via npm:
 npm install reading-time-plugin
 ```
 
-## Example
+## Usage
 
+First, let's import the plugin.
+
+```ts
+import readingTimePlugin, { ReadingTimePluginConfig, ReadingTimePluginResults } from 'reading-time-plugin';
+
+```
+Then, let's add the plugin config and get its results.
 ```ts
     // Setting basic config.
     const config: ReadingTimePluginConfig = {
@@ -38,3 +45,16 @@ npm install reading-time-plugin
     return result;
 
 ```
+
+# API
+
+```ts
+readingTimePlugin(config);
+```
+
+- `config.text`: The text to be estimated.
+- `config.wordsPerMinute`: The words per minute rate (optional, default: 225).
+
+
+# License
+This project is licensed under the MIT License - see the LICENSE file for details.

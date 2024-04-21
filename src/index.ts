@@ -58,7 +58,7 @@ function isWord(str: string) {
  * Returns the estimated time to read a provided text.
  * @param config ReadingTimePluginConfig - A configuration object for the plugin.
  * @param config.text string - The text to be estimated.
- * @param config.wordsPerMinute number? - The word per minutes rate (optional, default: 225).
+ * @param config.wordsPerMinute number? - The words per minute rate (optional, default: 225).
  * 
  * @returns ReadingTimePluginResults - Results Object.
  */
